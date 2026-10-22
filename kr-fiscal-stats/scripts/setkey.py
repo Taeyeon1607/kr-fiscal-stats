@@ -90,6 +90,43 @@ def no_window(why):
     sys.exit(3)
 
 
+def key_icon(tk, size=32):
+    """창·작업 표시줄 아이콘 — 파란 바탕에 흰 열쇠. 그림 파일 없이 점을 찍어 만든다(아나콘다·파이썬 아이콘 대신)."""
+    img = tk.PhotoImage(width=size, height=size)
+    blue, white = "#2b5797", "#ffffff"
+    rows = []
+    for y in range(size):
+        row = []
+        for x in range(size):
+            d2 = (x - 10.5) ** 2 + (y - 15.5) ** 2
+            ring = 16 <= d2 <= 49                                   # 열쇠 머리(고리)
+            shaft = 16 <= x <= 28 and 14 <= y <= 17                 # 몸통
+            teeth = (21 <= x <= 23 or 26 <= x <= 28) and 18 <= y <= 21
+            row.append(white if ring or shaft or teeth else blue)
+        rows.append("{" + " ".join(row) + "}")
+    img.put(" ".join(rows))
+    return img
+
+
+def bring_to_front(root, entry):
+    """창을 화면 가운데에 두고 맨 앞으로 올린 뒤 커서를 키 칸에 둔다.
+
+    ★뒤에서 뜬 프로세스가 연 창은 다른 창 뒤에 깔리거나 작업 표시줄에만 뜰 수 있다 —
+      잠깐 «늘 위»로 올렸다가 풀어 다른 창 위로 꺼내고, 초점을 강제로 가져온다.
+    """
+    root.update_idletasks()
+    w, h = root.winfo_reqwidth(), root.winfo_reqheight()
+    x = max(0, (root.winfo_screenwidth() - w) // 2)
+    y = max(0, (root.winfo_screenheight() - h) // 3)
+    root.geometry("+%d+%d" % (x, y))
+    root.deiconify()
+    root.lift()
+    root.attributes("-topmost", True)
+    root.after(400, lambda: root.attributes("-topmost", False))
+    root.focus_force()
+    entry.focus_force()
+
+
 def main():
     if len(sys.argv) != 2 or sys.argv[1] not in SOURCES:
         print("쓰는 법: python3 scripts/setkey.py <%s>" % "|".join(SOURCES), file=sys.stderr)
@@ -101,10 +138,22 @@ def main():
         from tkinter import font as tkfont, messagebox
     except ImportError:
         no_window("이 파이썬에 tkinter 가 없습니다")
+    if os.name == "nt":
+        # ★작업 표시줄이 이 창을 «python.exe» 묶음으로 보지 않고 제 아이콘으로 따로 보이게 한다
+        try:
+            import ctypes
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("kr-fiscal-stats.setkey")
+        except (AttributeError, OSError):
+            pass
     try:
         root = tk.Tk()
     except tk.TclError:
         no_window("화면이 없습니다")
+    root.withdraw()                     # 다 그린 뒤 가운데에서 보인다(bring_to_front)
+    try:
+        root.iconphoto(True, key_icon(tk))
+    except tk.TclError:
+        pass
 
     result = {"code": 1}
     root.title("%s 인증키 넣기" % title)
@@ -168,7 +217,7 @@ def main():
     tk.Button(btns, text="닫기", width=10, command=root.destroy).pack(side="right", padx=(0, 6))
     root.bind("<Return>", lambda _e: do_save())
     root.bind("<Escape>", lambda _e: root.destroy())
-    entry.focus_set()
+    bring_to_front(root, entry)
     root.mainloop()
 
     if result["code"] == 0:
