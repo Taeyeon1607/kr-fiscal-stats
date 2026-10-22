@@ -1,0 +1,23 @@
+# v* 꼬리표를 push 하면 claude.ai 계정 스킬로 올릴 kr-fiscal-stats.zip 을 만들어 그 릴리스에 붙인다.
+# 받는 주소: https://github.com/Taeyeon1607/kr-fiscal-stats/releases/latest/download/kr-fiscal-stats.zip
+name: release-zip
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: make zip
+        run: python3 tools/make-skill-zip.py --out dist/kr-fiscal-stats.zip
+      - name: attach to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title "$TAG" --notes "kr-fiscal-stats.zip: claude.ai Customize > Skills > Upload a skill"
+          gh release upload "$TAG" dist/kr-fiscal-stats.zip --clobber

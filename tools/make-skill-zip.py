@@ -30,25 +30,35 @@ KEYLIKE = re.compile(r"(^\.?[a-z]+_key(\..*)?$)|(_key\.txt$)|(^\.env)", re.I)
 SKIP_DIRS = {"__pycache__", ".git"}
 
 
-def is_link(p):
-    """심볼릭 링크, 또는 윈도우의 정션(폴더 바로 가기) — 둘 다 다른 자리를 가리킨다."""
-    return os.path.islink(p) or bool(getattr(os.path, "isjunction", lambda _: False)(p))
+def same(a, b):
+    return os.path.normcase(os.path.realpath(a)) == os.path.normcase(b)
+
+
+def is_link(p, expect):
+    """다른 자리를 가리키는가 — 심볼릭 링크, 윈도우 정션(폴더 바로 가기) 따위.
+    ★정션은 파이썬 3.11 까지 islink 에 안 걸린다. 그래서 «실제 경로가 있어야 할 자리와 같은가»로 판정한다
+      (윈도우의 realpath 는 3.8 부터 정션을 풀어 준다). expect = 링크를 하나도 안 거쳤을 때의 실제 경로."""
+    return os.path.islink(p) or not same(p, expect)
 
 
 def files(base):
     """(ZIP 안 경로, 실제 경로) 를 이름 순으로. 숨은 파일·임시 파일은 뺀다. 키 꼴 파일·링크는 따로 모은다(멈출 것)."""
     out, keylike = [], []
     top = os.path.dirname(base)
+    real_base = os.path.realpath(base)
+
+    def expect(p):
+        return os.path.join(real_base, os.path.relpath(p, base))
+
     for d, dirs, names in os.walk(base):
-        for x in dirs + names:
-            if is_link(os.path.join(d, x)):
-                keylike.append(os.path.relpath(os.path.join(d, x), top).replace(os.sep, "/") + "  (링크)")
-        dirs[:] = sorted(x for x in dirs if x not in SKIP_DIRS and not x.startswith(".")
-                         and not is_link(os.path.join(d, x)))
+        links = {x for x in dirs + names if is_link(os.path.join(d, x), expect(os.path.join(d, x)))}
+        for x in sorted(links):
+            keylike.append(os.path.relpath(os.path.join(d, x), top).replace(os.sep, "/") + "  (링크)")
+        dirs[:] = sorted(x for x in dirs if x not in SKIP_DIRS and not x.startswith(".") and x not in links)
         for n in sorted(names):
             p = os.path.join(d, n)
             rel = os.path.relpath(p, top).replace(os.sep, "/")
-            if is_link(p):
+            if n in links:
                 continue
             if KEYLIKE.search(n) or ".tmp-" in n:
                 keylike.append(rel)
@@ -63,15 +73,18 @@ def main():
     ap = argparse.ArgumentParser(description="claude.ai 에 올릴 스킬 ZIP 만들기")
     ap.add_argument("--out", default=os.path.join(ROOT, "dist", SKILL + ".zip"))
     a = ap.parse_args()
+    if os.name == "nt" and sys.version_info < (3, 8):
+        # 그 아래 판의 realpath 는 정션을 풀지 않아 링크를 못 가린다
+        sys.exit("파이썬 3.8 이상이 필요합니다.")
     base = os.path.join(ROOT, SKILL)
     if not os.path.isfile(os.path.join(base, "SKILL.md")):
         sys.exit("스킬 폴더를 못 찾았습니다: %s" % base)
-    if is_link(base):
+    if is_link(base, os.path.join(os.path.realpath(ROOT), SKILL)):
         sys.exit("스킬 폴더가 링크입니다: %s — 실제 폴더에서 돌리십시오." % base)
     items, keylike = files(base)
     for name in ("LICENSE", "NOTICE"):
         p = os.path.join(ROOT, name)
-        if is_link(p):
+        if is_link(p, os.path.join(os.path.realpath(ROOT), name)):
             keylike.append(name + "  (링크)")
         elif os.path.isfile(p):
             items.append((SKILL + "/" + name, p))

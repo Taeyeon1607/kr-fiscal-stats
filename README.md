@@ -62,8 +62,9 @@ https://github.com/Taeyeon1607/kr-fiscal-stats 의 스킬을 세팅해 줘
 클라우드 세션과 프로젝트 스레드(기본이 클라우드)는 Anthropic 클라우드에서 돕니다. 내 PC 의 스킬 폴더와 키 파일을 읽지 못하고 키 입력 창도 뜨지 않으므로 아래 세 가지를 직접 설정합니다.
 
 1. **스킬을 claude.ai 계정에 올립니다.** claude.ai 또는 데스크탑의 `Customize → Skills → + → Upload a skill` 에 ZIP 을 올립니다.
-   - ZIP 은 맨 위가 `kr-fiscal-stats/SKILL.md` 여야 합니다. 저장소 Releases 에 붙은 `kr-fiscal-stats.zip` 을 받거나, 저장소를 내려받아 `python3 tools/make-skill-zip.py`(Windows는 `python`)로 만듭니다(`dist/kr-fiscal-stats.zip`).
+   - 올릴 ZIP: **https://github.com/Taeyeon1607/kr-fiscal-stats/releases/latest/download/kr-fiscal-stats.zip** (늘 최신 판입니다).
    - GitHub 의 `Code → Download ZIP` 은 맨 위 폴더가 `kr-fiscal-stats-main/` 이라 그대로 올리면 맞지 않습니다.
+   - 스킬을 고쳐서 다시 묶을 때만 저장소를 내려받아 `python3 tools/make-skill-zip.py`(Windows는 `python`, 파이썬 3.8 이상)로 만듭니다(`dist/kr-fiscal-stats.zip`).
    - 프로젝트 스레드는 저장소 안의 `.claude/skills` 도 읽지 않으므로 이 방법만 됩니다.
 2. **클라우드 환경을 설정합니다.** 데스크탑 `설정 → 환경 → 클라우드 환경 → 추가`(또는 편집). 프로젝트는 `프로젝트 설정 → Environment` 에 고른 환경을 씁니다.
    - **네트워크 액세스**: `사용자 지정(Custom)`을 고르고 `허용된 도메인`에 쓸 자료원의 도메인을 한 줄씩 넣습니다. 기본(Trusted) 목록에는 이 다섯 곳이 없습니다. 패키지 관리자 기본 목록 포함은 켠 채로 둡니다.

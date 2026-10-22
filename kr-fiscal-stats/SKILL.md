@@ -61,7 +61,7 @@ description: 한국 재정·통계 공공 API 다섯 곳(지방재정365·열린
 
 1. **스킬을 claude.ai 계정에 올린다** — 클라우드·프로젝트 스레드는 내 PC 에 깐 스킬을 안 읽는다(프로젝트 스레드는 저장소 안 `.claude/skills` 도 안 읽는다).
    claude.ai 또는 데스크탑의 Customize → Skills → «+» → Upload a skill 에 ZIP 을 올린다.
-   ZIP 은 맨 위가 `kr-fiscal-stats/SKILL.md` 여야 한다 — 저장소의 Releases 에 붙은 `kr-fiscal-stats.zip` 을 받거나, 저장소에서 `python3 tools/make-skill-zip.py` 로 만든다. GitHub «Download ZIP» 은 맨 위 폴더가 달라 그대로는 안 된다.
+   올릴 ZIP: https://github.com/Taeyeon1607/kr-fiscal-stats/releases/latest/download/kr-fiscal-stats.zip (늘 최신 판). GitHub «Download ZIP» 은 맨 위 폴더가 달라 그대로는 안 된다. 스킬을 고쳐 다시 묶을 때만 저장소에서 `python3 tools/make-skill-zip.py` 로 만든다.
 2. **클라우드 환경을 연다** — 데스크탑 설정 → 환경 → 클라우드 환경 → 추가(또는 편집). 프로젝트 스레드는 **프로젝트 설정 → Environment** 에 고른 환경을 쓴다.
    - **네트워크 액세스**: «사용자 지정(Custom)» → «허용된 도메인»에 고른 곳만 한 줄씩. 기본(Trusted) 목록에는 이 다섯 곳이 없다. «패키지 관리자 허용(기본 목록 포함)»은 켠 채로 둔다.
 
