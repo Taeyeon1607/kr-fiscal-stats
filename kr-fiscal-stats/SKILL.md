@@ -57,11 +57,14 @@ description: 한국 재정·통계 공공 API 다섯 곳(지방재정365·열린
 
 ### ⑤ 2) 클라우드 — 세 단계
 
-클라우드 세션은 Anthropic 클라우드에서 돈다. 내 PC 의 스킬 폴더·키 파일을 못 읽고 키 넣는 창도 안 뜬다. 사용자가 아래 셋을 직접 한다.
+클라우드 세션은 Anthropic 클라우드에서 돈다. 내 PC 의 스킬 폴더·키 파일을 못 읽고 키 넣는 창도 안 뜬다. 클로드가 준비할 수 있는 것은 하고(ZIP · 붙여 넣을 줄), 올리기·환경 바꾸기는 사용자가 한다.
 
 1. **스킬을 claude.ai 계정에 올린다** — 클라우드·프로젝트 스레드는 내 PC 에 깐 스킬을 안 읽는다(프로젝트 스레드는 저장소 안 `.claude/skills` 도 안 읽는다).
    claude.ai 또는 데스크탑의 Customize → Skills → «+» → Upload a skill 에 ZIP 을 올린다.
-   올릴 ZIP: https://github.com/Taeyeon1607/kr-fiscal-stats/releases/latest/download/kr-fiscal-stats.zip (늘 최신 판). GitHub «Download ZIP» 은 맨 위 폴더가 달라 그대로는 안 된다. 스킬을 고쳐 다시 묶을 때만 저장소에서 `python3 tools/make-skill-zip.py` 로 만든다.
+   - **클로드가 ZIP 을 만들어 파일로 건넨다**: `git clone --depth 1 https://github.com/Taeyeon1607/kr-fiscal-stats` 뒤 `python3 tools/make-skill-zip.py`(→ `dist/kr-fiscal-stats.zip`). clone 이 안 되면 `curl -L -o kr-fiscal-stats.zip https://github.com/Taeyeon1607/kr-fiscal-stats/releases/latest/download/kr-fiscal-stats.zip`.
+     클라우드 세션에서 사용자가 파일을 내려받는 방법은 공식 문서에서 확인하지 못했다 — 건넬 수 없으면 위 릴리스 주소를 준다.
+   - **올리기는 사용자가 누른다** — 클로드 코드는 계정 스킬을 내려받기만 하고 올리지 못한다(공식 문서 «Claude Code downloads synced skills and never uploads them»).
+   - 클로드 없이 받을 때: https://github.com/Taeyeon1607/kr-fiscal-stats/releases/latest/download/kr-fiscal-stats.zip (늘 최신 판). GitHub «Download ZIP» 은 맨 위 폴더가 달라 그대로는 안 된다.
 2. **클라우드 환경을 연다** — 데스크탑 설정 → 환경 → 클라우드 환경 → 추가(또는 편집). 프로젝트 스레드는 **프로젝트 설정 → Environment** 에 고른 환경을 쓴다.
    - **네트워크 액세스**: «사용자 지정(Custom)» → «허용된 도메인»에 고른 곳만 한 줄씩. 기본(Trusted) 목록에는 이 다섯 곳이 없다. «패키지 관리자 허용(기본 목록 포함)»은 켠 채로 둔다.
 
@@ -74,6 +77,8 @@ description: 한국 재정·통계 공공 API 다섯 곳(지방재정365·열린
      | 경기데이터드림 | `openapi.gg.go.kr` |
 
    - **환경 변수**: 고른 곳마다 `KOSIS_API_KEY=발급받은키` 처럼 한 줄씩(이름은 ② 표). 스크립트는 환경변수를 키 파일보다 먼저 읽는다.
+   - 사용자가 그대로 붙이게 **고른 곳만 남긴 두 묶음**을 내놓는다 — 허용된 도메인 줄들, 그리고 `KOSIS_API_KEY=` 처럼 **값을 비운** 환경 변수 줄들. 키 값은 사용자가 환경 화면에서 채운다.
+   - 환경 변수·도메인이 이미 갖춰진 세션이면 clone 한 자리의 `kr-fiscal-stats/scripts` 를 그 세션에서 바로 써도 된다.
    - **혼자 쓰는 환경에만** 넣는다. 그 환경을 쓰는 사람은 환경 변수를 볼 수 있다. 조직 공유 환경이나 다른 사람과 나눈 환경에는 넣지 않는다.
    - «네트워크 시크릿»은 쓰지 않는다 — 이 스킬로 시험된 적이 없고, 한국은행은 키가 주소 경로에 들어가 안 될 가능성이 크다.
 3. **그 환경으로 새 세션(새 스레드)을 연다.** 바꾼 환경은 새 세션부터 먹는다.

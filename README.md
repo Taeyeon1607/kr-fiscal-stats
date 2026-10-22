@@ -40,8 +40,26 @@
 클로드 데스크탑 코드 탭에서 아래처럼 요청하면, 클로드가 먼저 로컬 세션인지 클라우드 세션인지 묻고 그에 맞게 안내합니다. 쓸 자료원을 고르고, 발급 방법과 [인증키 받기 설명서(PDF)](docs/kr-fiscal-stats-인증키-받기.pdf)를 보여 준 뒤 키 넣는 법으로 넘어갑니다.
 
 ```text
-https://github.com/Taeyeon1607/kr-fiscal-stats 의 스킬을 세팅해 줘
+https://github.com/Taeyeon1607/kr-fiscal-stats 의 스킬을 설치하고 세팅해 줘
 ```
+
+#### 클로드가 따르는 순서
+
+> 이 절은 설치를 맡은 클로드가 읽고 따르는 순서입니다.
+
+1. **어디서 쓰는지 묻습니다** — 데스크탑 코드 탭의 **로컬 세션**인지, **클라우드 세션·프로젝트 스레드**인지. 프로젝트에서도 **+ → Work locally** 로 돌리면 로컬입니다.
+2. **로컬 세션**
+   - 저장소를 받아(`git clone https://github.com/Taeyeon1607/kr-fiscal-stats`) `kr-fiscal-stats/` 폴더를 [로컬 세션](#로컬-세션) 표의 스킬 폴더 자리로 복사합니다.
+   - 그다음은 `kr-fiscal-stats/SKILL.md` 0절 ②부터 따릅니다: 쓸 곳 고르기 → 설명서 PDF → 키 넣는 창.
+3. **클라우드 세션·프로젝트 스레드**
+   - **ZIP 을 만들어 사용자에게 파일로 건넵니다.** 그 세션에서 `git clone --depth 1 https://github.com/Taeyeon1607/kr-fiscal-stats` 뒤 `python3 tools/make-skill-zip.py` 로 `dist/kr-fiscal-stats.zip` 을 만듭니다. clone 이 안 되면 `curl -L -o kr-fiscal-stats.zip https://github.com/Taeyeon1607/kr-fiscal-stats/releases/latest/download/kr-fiscal-stats.zip` 로 받습니다.
+     - 클라우드 세션에서 사용자가 파일을 내려받는 방법은 공식 문서에서 확인하지 못했습니다. 건넬 수 없으면 위 릴리스 주소를 알려 줍니다.
+   - **사용자가 직접 할 세 가지를 안내합니다.** 클로드 코드는 계정 스킬을 내려받기만 하고 올리지는 못합니다(공식 문서 «Claude Code downloads synced skills and never uploads them»).
+     1. 받은 ZIP 을 `Customize → Skills → + → Upload a skill` 로 올립니다.
+     2. 클라우드 환경에 허용 도메인과 환경 변수를 넣습니다. 클로드는 [클라우드 세션](#클라우드-세션) 2단계의 두 줄 묶음을 그대로 붙일 꼴로 내놓습니다. 키 자리는 비워 두고, 사용자가 환경 화면에서 직접 채웁니다.
+     3. 그 환경으로 새 세션을 엽니다.
+   - 환경 변수와 도메인이 이미 갖춰진 세션이면, clone 한 자리의 `kr-fiscal-stats/scripts` 를 그 세션에서 바로 써도 됩니다.
+4. 어느 쪽이든 **키 값을 대화창으로 받지 않습니다.**
 
 ### 로컬 세션
 
@@ -62,7 +80,7 @@ https://github.com/Taeyeon1607/kr-fiscal-stats 의 스킬을 세팅해 줘
 클라우드 세션과 프로젝트 스레드(기본이 클라우드)는 Anthropic 클라우드에서 돕니다. 내 PC 의 스킬 폴더와 키 파일을 읽지 못하고 키 입력 창도 뜨지 않으므로 아래 세 가지를 직접 설정합니다.
 
 1. **스킬을 claude.ai 계정에 올립니다.** claude.ai 또는 데스크탑의 `Customize → Skills → + → Upload a skill` 에 ZIP 을 올립니다.
-   - 올릴 ZIP: **https://github.com/Taeyeon1607/kr-fiscal-stats/releases/latest/download/kr-fiscal-stats.zip** (늘 최신 판입니다).
+   - 올릴 ZIP: 클로드에게 맡기면 클로드가 만들어 건넵니다([클로드가 따르는 순서](#클로드가-따르는-순서) 3). 클로드 없이 받을 때는 **https://github.com/Taeyeon1607/kr-fiscal-stats/releases/latest/download/kr-fiscal-stats.zip** (늘 최신 판)입니다.
    - GitHub 의 `Code → Download ZIP` 은 맨 위 폴더가 `kr-fiscal-stats-main/` 이라 그대로 올리면 맞지 않습니다.
    - 스킬을 고쳐서 다시 묶을 때만 저장소를 내려받아 `python3 tools/make-skill-zip.py`(Windows는 `python`, 파이썬 3.8 이상)로 만듭니다(`dist/kr-fiscal-stats.zip`).
    - 프로젝트 스레드는 저장소 안의 `.claude/skills` 도 읽지 않으므로 이 방법만 됩니다.
@@ -78,6 +96,24 @@ https://github.com/Taeyeon1607/kr-fiscal-stats 의 스킬을 세팅해 줘
      | 경기데이터드림 | `openapi.gg.go.kr` |
 
    - **환경 변수**: 쓸 자료원마다 `KOSIS_API_KEY=발급받은키` 형태로 한 줄씩 넣습니다(이름은 아래 [인증키 설정](#인증키-설정) 표).
+   - 붙여 넣을 꼴입니다. 쓰지 않을 자료원의 줄은 지웁니다.
+
+     ```text
+     www.lofin365.go.kr
+     openapi.openfiscaldata.go.kr
+     www.openfiscaldata.go.kr
+     kosis.kr
+     ecos.bok.or.kr
+     openapi.gg.go.kr
+     ```
+
+     ```text
+     LOFIN_API_KEY=
+     OPENFISCAL_API_KEY=
+     KOSIS_API_KEY=
+     ECOS_API_KEY=
+     GGDREAM_API_KEY=
+     ```
    - 환경 변수는 그 환경을 쓰는 사람이 볼 수 있습니다. **혼자 쓰는 환경에만** 넣고, 조직 공유 환경이나 다른 사람과 나눈 환경에는 넣지 마십시오.
    - `네트워크 시크릿`은 쓰지 않습니다. 이 스킬로 시험한 적이 없고, 한국은행 ECOS 는 키가 주소 경로에 들어가 동작하지 않을 가능성이 큽니다.
 3. **그 환경으로 새 세션(새 스레드)을 엽니다.** 바꾼 설정은 새 세션부터 적용됩니다.
