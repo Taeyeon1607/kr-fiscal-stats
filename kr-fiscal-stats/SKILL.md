@@ -61,7 +61,7 @@ description: 한국 재정·통계 공공 API 다섯 곳(지방재정365·열린
 
 1. **스킬을 claude.ai 계정에 올린다** — 클라우드·프로젝트 스레드는 내 PC 에 깐 스킬을 안 읽는다(프로젝트 스레드는 저장소 안 `.claude/skills` 도 안 읽는다).
    claude.ai 또는 데스크탑의 Customize → Skills → «+» → Upload a skill 에 ZIP 을 올린다.
-   - **클로드가 ZIP 을 만들어 파일로 건넨다**: `git clone --depth 1 https://github.com/Taeyeon1607/kr-fiscal-stats` 뒤 `python3 tools/make-skill-zip.py`(→ `dist/kr-fiscal-stats.zip`). clone 이 안 되면 `curl -L -o kr-fiscal-stats.zip https://github.com/Taeyeon1607/kr-fiscal-stats/releases/latest/download/kr-fiscal-stats.zip`.
+   - **클로드가 ZIP 을 만들어 파일로 건넨다**: `git clone --depth 1 https://github.com/Taeyeon1607/kr-fiscal-stats` → `cd kr-fiscal-stats`(받은 저장소 폴더 — 안에 같은 이름의 스킬 폴더가 또 있다) → `python3 tools/make-skill-zip.py`(→ `dist/kr-fiscal-stats.zip`). clone 이 안 되면 `curl -fL -o kr-fiscal-stats.zip https://github.com/Taeyeon1607/kr-fiscal-stats/releases/latest/download/kr-fiscal-stats.zip` 로 받고, 종료코드 0 일 때만 건넨다(`-f` 없이는 404 오류 글도 파일로 남는다).
      클라우드 세션에서 사용자가 파일을 내려받는 방법은 공식 문서에서 확인하지 못했다 — 건넬 수 없으면 위 릴리스 주소를 준다.
    - **올리기는 사용자가 누른다** — 클로드 코드는 계정 스킬을 내려받기만 하고 올리지 못한다(공식 문서 «Claude Code downloads synced skills and never uploads them»).
    - 클로드 없이 받을 때: https://github.com/Taeyeon1607/kr-fiscal-stats/releases/latest/download/kr-fiscal-stats.zip (늘 최신 판). GitHub «Download ZIP» 은 맨 위 폴더가 달라 그대로는 안 된다.

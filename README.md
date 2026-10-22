@@ -49,10 +49,10 @@ https://github.com/Taeyeon1607/kr-fiscal-stats 의 스킬을 설치하고 세팅
 
 1. **어디서 쓰는지 묻습니다** — 데스크탑 코드 탭의 **로컬 세션**인지, **클라우드 세션·프로젝트 스레드**인지. 프로젝트에서도 **+ → Work locally** 로 돌리면 로컬입니다.
 2. **로컬 세션**
-   - 저장소를 받아(`git clone https://github.com/Taeyeon1607/kr-fiscal-stats`) `kr-fiscal-stats/` 폴더를 [로컬 세션](#로컬-세션) 표의 스킬 폴더 자리로 복사합니다.
+   - 저장소를 받습니다(`git clone https://github.com/Taeyeon1607/kr-fiscal-stats` → `cd kr-fiscal-stats`). 받은 저장소 폴더와 그 안의 스킬 폴더 이름이 같습니다. 복사할 것은 **안쪽** `kr-fiscal-stats/`(`SKILL.md` 가 든 폴더)이고, 이것을 [로컬 세션](#로컬-세션) 표의 스킬 폴더 자리로 복사합니다.
    - 그다음은 `kr-fiscal-stats/SKILL.md` 0절 ②부터 따릅니다: 쓸 곳 고르기 → 설명서 PDF → 키 넣는 창.
 3. **클라우드 세션·프로젝트 스레드**
-   - **ZIP 을 만들어 사용자에게 파일로 건넵니다.** 그 세션에서 `git clone --depth 1 https://github.com/Taeyeon1607/kr-fiscal-stats` 뒤 `python3 tools/make-skill-zip.py` 로 `dist/kr-fiscal-stats.zip` 을 만듭니다. clone 이 안 되면 `curl -L -o kr-fiscal-stats.zip https://github.com/Taeyeon1607/kr-fiscal-stats/releases/latest/download/kr-fiscal-stats.zip` 로 받습니다.
+   - **ZIP 을 만들어 사용자에게 파일로 건넵니다.** 그 세션에서 `git clone --depth 1 https://github.com/Taeyeon1607/kr-fiscal-stats` → `cd kr-fiscal-stats`(받은 저장소 폴더) → `python3 tools/make-skill-zip.py` 로 `dist/kr-fiscal-stats.zip` 을 만듭니다. clone 이 안 되면 `curl -fL -o kr-fiscal-stats.zip https://github.com/Taeyeon1607/kr-fiscal-stats/releases/latest/download/kr-fiscal-stats.zip` 로 받습니다. `curl` 이 0 으로 끝난 것만 건넵니다(`-f` 가 없으면 404 오류 글도 파일로 저장됩니다).
      - 클라우드 세션에서 사용자가 파일을 내려받는 방법은 공식 문서에서 확인하지 못했습니다. 건넬 수 없으면 위 릴리스 주소를 알려 줍니다.
    - **사용자가 직접 할 세 가지를 안내합니다.** 클로드 코드는 계정 스킬을 내려받기만 하고 올리지는 못합니다(공식 문서 «Claude Code downloads synced skills and never uploads them»).
      1. 받은 ZIP 을 `Customize → Skills → + → Upload a skill` 로 올립니다.
