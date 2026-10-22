@@ -24,7 +24,7 @@ description: 한국 재정·통계 공공 API 다섯 곳(지방재정365·열린
   준비: 데스크탑 설정 → Claude Code → «Use this computer from your phone and claude.ai» 켜고 폴더 더하기, 클로드 코드 v2.1.280 이상. 뜨는 카드에서 폴더를 고르고 «Allow once».
 - 터미널에서 쓰는 클로드 코드는 1) 로컬과 같다.
 - 1) 로컬의 스킬 폴더 자리: 윈도우 `C:\Users\<이름>\.claude\skills\kr-fiscal-stats` · 맥 `~/.claude/skills/kr-fiscal-stats`(`SKILL.md` 가 바로 보이게). 코드 탭에서 안 보이면 연 작업 폴더 안의 `.claude/skills/kr-fiscal-stats` 에 넣는다. 넣은 뒤 새 세션을 연다.
-- **Cowork·일반 채팅은 지금 안 된다** — 스크립트가 클라우드에서 도는데 키를 넣을 자리와 도메인을 열 방법이 없다. 거기서 불렸으면 그렇다고 한 줄 알리고 코드 탭으로 옮기게 한다.
+- **Cowork·일반 채팅은 지금 안 된다** — 키를 안전하게 넣을 칸이 없다. 키를 대화로 받는 길은 두지 않는다. 거기서 불렸으면 그렇다고 한 줄 알리고 클로드 데스크탑 코드 탭(로컬·클라우드)을 쓰게 한다.
 
 ### ② 쓸 곳만 고르고 키를 신청한다
 
