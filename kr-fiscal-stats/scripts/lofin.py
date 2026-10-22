@@ -25,6 +25,21 @@ XHR = {"X-Requested-With": "XMLHttpRequest"}
 # 포털 「출력값」 표가 틀린 것 — 값으로 재서 바로잡았다(2026-09-23, 2025 경기본청).
 # fin_acv_* 는 모든 분야에 값이 있는 행정운영경비, padm_oper_* 는 「기타」 분야에만 있는 재무활동이다.
 FIXES = {("AIDFA", "fin_acv_prsm_amt"): "행정운영경비순계", ("AIDFA", "padm_oper_prsm_exps"): "재무활동순계"}
+# 포털 「출력값」 표에 «없는» 칸 — 실제 응답에는 오는데 표가 빠뜨렸다. 자료코드 → [(칸, 뜻, 이 칸 뒤에)].
+# FNCST 는 다른 자료들처럼 wa_laf_cd(지역코드)가 오는데 표에만 없어서 뜻이 «?» 로 나왔다.
+ADDS = {"FNCST": [("wa_laf_cd", "지역코드", "fyr")]}
+
+
+def add_missing(hub, rows):
+    """포털 표에 빠진 칸(`ADDS`)을 제자리에 끼운다. 이미 있으면 그대로 둔다 — 포털이 고치면 저절로 그쪽을 따른다."""
+    rows = list(rows)
+    for col, label, after in ADDS.get(hub, []):
+        names = [r[0] for r in rows]
+        if col in names:
+            continue
+        at = names.index(after) + 1 if after in names else len(rows)
+        rows.insert(at, (col, label, ""))
+    return rows
 
 
 def meanings(hub):
@@ -98,7 +113,7 @@ def rebuild(listed):
         cats.setdefault(clean(x.get("menuAtcClsNm")) or "(분류없음)", []).append(
             (hub, clean(x.get("pdtaNm")), clean(x.get("pdtaInfoCntt")), cycle,
              " ".join(r[2] for r in params if len(r) >= 3), " ".join(r[2] for r in outs if len(r) >= 3)))
-        fields[hub] = [(r[1], FIXES.get((hub, r[1]), r[2]), r[3] if len(r) > 3 else "") for r in outs if len(r) >= 3]
+        fields[hub] = add_missing(hub, [(r[1], FIXES.get((hub, r[1]), r[2]), r[3] if len(r) > 3 else "") for r in outs if len(r) >= 3])
         if n % 20 == 0:
             print("  … %d/%d" % (n, len(listed)))
         time.sleep(0.6)
@@ -121,7 +136,8 @@ def rebuild(listed):
              "출처는 포털의 자료별 OpenAPI 상세 화면 「출력값」 표(%s 받음)." % day, "",
              "- ★**칸은 «이름»으로 맞춘다. 순서로 맞추지 않는다** — 포털 표와 실제 응답의 순서가 다른 자료가 있다.",
              "- ★**금액 단위는 거의 안 적혀 있다.** 뜻 칸에 `(천원)`·`(원)`·`(%)` 로 적힌 것만 공식 표기다. 나머지는 크기로 맞춰 보고 «추정»이라고 밝힌다.",
-             "- ★**`AIDFA` 순계 두 칸은 포털 표가 거꾸로 적었다** — 값으로 재서 바로잡았다(`lofin.py` 의 `FIXES`). 총계 두 칸은 포털 표가 맞다.", "",
+             "- ★**`AIDFA` 순계 두 칸은 포털 표가 거꾸로 적었다** — 값으로 재서 바로잡았다(`lofin.py` 의 `FIXES`). 총계 두 칸은 포털 표가 맞다.",
+             "- ★**`FNCST` 의 `wa_laf_cd`(지역코드)는 포털 표에 없지만 응답에는 온다** — 다른 자료와 같은 뜻으로 더했다(`lofin.py` 의 `ADDS`).", "",
              "| 자료코드 | 칸 | 뜻 | 포털 설명 |", "|---|---|---|---|"]
     for hub in sorted(fields):
         lines += ["| `%s` | `%s` | %s | %s |" % (hub, c, cell(l), cell(d)) for c, l, d in fields[hub]]
