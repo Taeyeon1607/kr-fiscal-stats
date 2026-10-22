@@ -86,7 +86,12 @@ def save_key(name, value):
 
 def no_window(why):
     print("이 자리에서는 창을 못 띄웁니다(%s)." % why, file=sys.stderr)
-    print("키는 설치와-사용.md 「키 세팅」 절의 «그 밖에» 길로 넣어 주십시오. 키를 대화창에 붙여 넣지는 마십시오.", file=sys.stderr)
+    if os.environ.get("CLAUDE_CODE_REMOTE", "").strip().lower() == "true":
+        # 클라우드 세션 — 창도 홈 폴더 키 파일도 내 PC 가 아니다
+        print("클라우드 세션입니다. 키는 클라우드 환경 편집 화면의 «환경 변수» 칸에 넣습니다(설치와-사용.md «클라우드 세션» 절).", file=sys.stderr)
+    else:
+        print("키는 설치와-사용.md 「키 세팅」 절의 «그 밖에» 길로 넣어 주십시오.", file=sys.stderr)
+    print("키를 대화창에 붙여 넣지는 마십시오.", file=sys.stderr)
     sys.exit(3)
 
 
